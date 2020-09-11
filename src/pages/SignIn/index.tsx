@@ -9,12 +9,11 @@ import {
     Button,
 } from '@material-ui/core';
 
-import { useAuth } from '../../hooks/auth';
-import { useToast } from '../../hooks/toast';
-
 import { Formik, Form, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
+import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 
 import { Container } from './styles';
 
@@ -23,34 +22,30 @@ interface ISignInForm {
     password: string;
 }
 
-interface IFormStatus {
-    message: string
-    type: string
-}
-
 const SignIn: React.FC = () => {
     // const history = useHistory();
 
-    const { signIn } = useAuth();
+    const { signIn, user } = useAuth();
     const { addToast } = useToast();
+
+    const handleToastError = useCallback(() => {
+        addToast({
+            type: 'error',
+            title: 'Erro na autenticação',
+            description: 'Ocorreu um erro ao fazer login. Cheque as credenciais.',
+        });
+    }, [addToast]);
 
     const handleSubmitSignIn = useCallback(async (data: ISignInForm) => {
         try {
-            console.log(data);
-
-            // const schema = Yup.object().shape({
-            //     email: Yup.string().required('E-mail obrigatório'),
-            //     password: Yup.string().required('Senha obrigatória'),
-            // });
-
-            // await schema.validate(data, {
-            //     abortEarly: false,
-            // });
-
             await signIn({
                 email: data.email,
                 password: data.password,
             });
+
+            if(user.name === '') {
+                handleToastError();
+            }
 
             // history.push('/dashboard');
 
@@ -60,13 +55,9 @@ const SignIn: React.FC = () => {
                 description: 'Você já pode navegar!',
             });
         } catch(err) {
-            addToast({
-                type: 'error',
-                title: 'Erro na autenticação',
-                description: 'Ocorreu um erro ao fazer login. Cheque as credenciais.',
-            });
+            handleToastError();
         }
-    }, [addToast, signIn]);
+    }, [addToast, signIn, user, handleToastError]);
 
     return (
         <Container>

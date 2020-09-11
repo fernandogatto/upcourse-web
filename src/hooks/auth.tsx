@@ -39,8 +39,6 @@ const AuthProvider: React.FC = ({ children }) => {
 
             return { token, user: JSON.parse(user) };
         }
-        // localStorage.removeItem('@UpCourse:token');
-        // localStorage.removeItem('@UpCourse:user');
 
         return {} as IAuthState;
     });
@@ -53,9 +51,7 @@ const AuthProvider: React.FC = ({ children }) => {
 
         const { token, user } = response.data;
 
-        console.log(token)
-
-        if(token) {
+        if(response.data.status !== 'erro') {
             localStorage.setItem('@UpCourse:token', token);
             localStorage.setItem('@UpCourse:user', JSON.stringify(user));
 

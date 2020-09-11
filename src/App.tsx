@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
+import { ThemeProvider } from '@material-ui/styles';
+import theme from './styles/theme';
+
 // import { Provider } from 'react-redux';
 // import store from './store';
 
@@ -13,9 +16,11 @@ const App: React.FC = () => {
     return (
         <>
             <BrowserRouter>
-                <AppProvider>
-                    <Routes />
-                </AppProvider>
+                <ThemeProvider theme={theme}>
+                    <AppProvider>
+                        <Routes />
+                    </AppProvider>
+                </ThemeProvider>
             </BrowserRouter>
 
             <GlobalStyle />
