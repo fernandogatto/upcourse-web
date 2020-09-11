@@ -83,7 +83,6 @@ const SignIn: React.FC = () => {
                             })
                         }
                     >
-
                         {(props: FormikProps<ISignInForm>) => {
                         const {
                             values,
