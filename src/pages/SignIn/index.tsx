@@ -1,7 +1,8 @@
 import React, {
     useCallback,
+    useState,
 } from 'react';
-// import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import {
     Grid,
@@ -12,10 +13,12 @@ import {
 import { Formik, Form, FormikProps } from 'formik';
 import * as Yup from 'yup';
 
-import { useAuth } from '../../hooks/auth';
+import { useAuth, checkToken } from '../../hooks/auth';
 import { useToast } from '../../hooks/toast';
 
-import { Container } from './styles';
+import { Container, Loading } from './styles';
+
+import logo from '../../assets/logo-etapa.png';
 
 interface ISignInForm {
     email: string;
@@ -23,7 +26,9 @@ interface ISignInForm {
 }
 
 const SignIn: React.FC = () => {
-    // const history = useHistory();
+    const history = useHistory();
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const { signIn, user } = useAuth();
     const { addToast } = useToast();
@@ -38,24 +43,28 @@ const SignIn: React.FC = () => {
 
     const handleSubmitSignIn = useCallback(async (data: ISignInForm) => {
         try {
+            setIsLoading(true);
+
             await signIn({
                 email: data.email,
                 password: data.password,
             });
 
-            if(user.name === '') {
+            if(checkToken() === true) {
+                history.push('/home');
+
+                addToast({
+                    type: 'success',
+                    title: 'Logado',
+                    description: 'Você já pode navegar!',
+                });
+            } else {
                 handleToastError();
             }
-
-            // history.push('/dashboard');
-
-            addToast({
-                type: 'success',
-                title: 'Logado',
-                description: 'Você já pode navegar!',
-            });
         } catch(err) {
             handleToastError();
+        } finally {
+            setIsLoading(false);
         }
     }, [addToast, signIn, user, handleToastError]);
 
@@ -64,6 +73,8 @@ const SignIn: React.FC = () => {
             <Grid container component="main">
                 <Grid item xs={false} md={7} sm={false} className="signIn-image" />
                 <Grid item xs={12} md={5} sm={12} className="signIn-content">
+                    <img src={logo} alt="Sistema Etapa"/>
+
                     <h1>Login</h1>
 
                     <Formik
@@ -144,6 +155,8 @@ const SignIn: React.FC = () => {
                                     >
                                         Entrar
                                     </Button>
+
+                                    {isLoading && <Loading />}
                                 </Form>
                             );
                         }}

@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { withTheme } from '@material-ui/core/styles';
 
 const appearFromRight = keyframes`
     from {
@@ -11,7 +12,7 @@ const appearFromRight = keyframes`
     }
 `;
 
-export const Container = styled.div`
+export const Container = withTheme(styled.div`
     width: 100vw;
     height: 100vh;
 
@@ -39,12 +40,19 @@ export const Container = styled.div`
                 padding: 64px 32px;
             }
 
-            h1 {
-                text-align: center;
+            > img {
                 margin-bottom: 32px;
             }
 
+            h1 {
+                text-align: center;
+                margin-bottom: 32px;
+                color: ${props => props.theme.palette.primary.main};
+            }
+
             form {
+                position: relative;
+
                 > div {
                     width: 100%;
                 }
@@ -55,10 +63,45 @@ export const Container = styled.div`
 
                 button {
                     margin: 21px auto 0;
+
                     display: inherit;
                 }
             }
         }
     }
 
-`;
+`);
+
+export const Loading = withTheme(styled.div`
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:after {
+        content: "";
+        display: block;
+        width: 16px;
+        height: 16px;
+        margin: auto;
+        border-radius: 50%;
+        border: 3px solid ${props => props.theme.palette.primary.main};
+        border-color: ${props => props.theme.palette.primary.main} transparent
+            ${props => props.theme.palette.primary.main} transparent;
+        animation: spinner 1.2s linear infinite;
+    }
+
+    @keyframes spinner {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+`);
